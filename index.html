@@ -16,14 +16,14 @@
     align-items: center;
   }
   .container {
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.7); /* transparent black overlay */
     padding: 2rem;
     border-radius: 1rem;
     width: 100%;
     max-width: 320px;
     color: #fff;
   }
-  h2 { text-align: center; margin-bottom: 1rem; }
+  h2 { text-align: center; margin-bottom: 1rem; color: #FFD700; }
   input, button {
     width: 100%;
     padding: 0.8rem;
@@ -33,11 +33,14 @@
     font-size: 1rem;
   }
   input {
-    background: #fff; 
-    color: #000;
+    background: transparent;
+    border-bottom: 1px solid #fff;
+    color: #fff;
+    padding-left: 0;
   }
+  input::placeholder { color: #ccc; }
   button {
-    background-color: #FFD700; /* yellow */
+    background-color: #FFD700;
     color: #000;
     cursor: pointer;
     font-weight: bold;
@@ -47,7 +50,7 @@
     cursor: pointer;
     text-decoration: underline;
   }
-  .error { color: red; font-size: 0.9rem; margin:0.3rem 0; }
+  .error { color: red; font-size: 0.9rem; margin: 0.3rem 0; }
   p { text-align: center; }
 </style>
 </head>
@@ -76,9 +79,8 @@
   <p>Already have an account? <a id="to-login">Log In</a></p>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Firebase & Firestore -->
 <script type="module">
-  // Import Firestore & Auth SDKs
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js";
@@ -96,82 +98,80 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const loginContainer = document.getElementById('login-container');
-  const signupContainer = document.getElementById('signup-container');
+  document.addEventListener('DOMContentLoaded', () => {
+    const loginContainer = document.getElementById('login-container');
+    const signupContainer = document.getElementById('signup-container');
 
-  document.getElementById('to-signup').onclick = () => {
-    loginContainer.style.display = 'none';
-    signupContainer.style.display = 'block';
-  };
-  document.getElementById('to-login').onclick = () => {
-    signupContainer.style.display = 'none';
-    loginContainer.style.display = 'block';
-  };
-  document.getElementById('to-reset').onclick = () => {
-    alert('Reset password feature coming soon.');
-  };
-
-  // Sign up
-  document.getElementById('signup-btn').onclick = async () => {
-    const username = document.getElementById('signup-username').value.trim();
-    const password = document.getElementById('signup-password').value;
-    const confirm = document.getElementById('signup-confirm').value;
-    const email = document.getElementById('signup-email').value.trim();
-    const errorEl = document.getElementById('signup-error');
-    errorEl.textContent = '';
-
-    if (!username || !password || !confirm || !email) {
-      errorEl.textContent = 'Please fill all required fields';
-      return;
-    }
-    if (username.length < 5) {
-      errorEl.textContent = 'Username must be at least 5 characters';
-      return;
-    }
-    if (password.length < 6) {
-      errorEl.textContent = 'Password must be at least 6 characters';
-      return;
-    }
-    if (password !== confirm) {
-      errorEl.textContent = 'Passwords do not match';
-      return;
-    }
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      errorEl.textContent = 'Please enter a valid email address';
-      return;
-    }
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const uid = userCredential.user.uid;
-      await setDoc(doc(db, "users", uid), { username, email });
-      alert('Sign up successful — please log in.');
+    document.getElementById('to-signup').onclick = () => {
+      loginContainer.style.display = 'none';
+      signupContainer.style.display = 'block';
+    };
+    document.getElementById('to-login').onclick = () => {
       signupContainer.style.display = 'none';
       loginContainer.style.display = 'block';
-    } catch (e) {
-      errorEl.textContent = e.message || 'Error signing up';
-    }
-  };
+    };
+    document.getElementById('to-reset').onclick = () => {
+      alert('Reset password feature coming soon.');
+    };
 
-  // Log in
-  document.getElementById('login-btn').onclick = async () => {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const errorEl = document.getElementById('login-error');
-    errorEl.textContent = '';
+    document.getElementById('signup-btn').onclick = async () => {
+      const username = document.getElementById('signup-username').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const confirm = document.getElementById('signup-confirm').value;
+      const email = document.getElementById('signup-email').value.trim();
+      const errorEl = document.getElementById('signup-error');
+      errorEl.textContent = '';
 
-    if (!email || !password) {
-      errorEl.textContent = 'Please fill all required fields';
-      return;
-    }
+      if (!username || !password || !confirm || !email) {
+        errorEl.textContent = 'Please fill all required fields';
+        return;
+      }
+      if (username.length < 5) {
+        errorEl.textContent = 'Username must be at least 5 characters';
+        return;
+      }
+      if (password.length < 6) {
+        errorEl.textContent = 'Password must be at least 6 characters';
+        return;
+      }
+      if (password !== confirm) {
+        errorEl.textContent = 'Passwords do not match';
+        return;
+      }
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        errorEl.textContent = 'Please enter a valid email address';
+        return;
+      }
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = 'dashboard.html';
-    } catch (e) {
-      errorEl.textContent = e.message || 'Error logging in';
-    }
-  };
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", userCredential.user.uid), { username, email });
+        alert('Sign up successful — please log in.');
+        signupContainer.style.display = 'none';
+        loginContainer.style.display = 'block';
+      } catch (e) {
+        errorEl.textContent = e.message || 'Error signing up';
+      }
+    };
+
+    document.getElementById('login-btn').onclick = async () => {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+      errorEl.textContent = '';
+      if (!email || !password) {
+        errorEl.textContent = 'Please fill all required fields';
+        return;
+      }
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = 'dashboard.html';
+      } catch (e) {
+        errorEl.textContent = e.message || 'Error logging in';
+      }
+    };
+  });
 </script>
+
 </body>
 </html>
