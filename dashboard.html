@@ -9,55 +9,47 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #fff;
+    background: #ccc;
     color: #000;
   }
-
-  /* Top navbar */
   .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.8rem 1rem;
-    background: #000;
-    color: #FFD700;
+    background: #555;
+    color: #fff;
   }
   .navbar .profile {
     cursor: pointer;
+    font-size: 1.5rem;
   }
   .navbar .menu-toggle {
     cursor: pointer;
     font-size: 1.5rem;
   }
-
-  /* Sidebar */
   .sidebar {
     position: fixed;
     top: 0;
     left: -250px;
     width: 250px;
     height: 100%;
-    background: #111;
+    background: #555;
     padding-top: 2rem;
     transition: left 0.3s ease;
     z-index: 999;
   }
-  .sidebar.open {
-    left: 0;
-  }
+  .sidebar.open { left: 0; }
   .sidebar a {
     display: block;
     padding: 1rem;
     color: #fff;
     text-decoration: none;
-    border-bottom: 1px solid #333;
-    transition: background 0.3s;
+    border-bottom: 1px solid #777;
   }
   .sidebar a:hover {
-    background: #333;
+    background: #777;
   }
-
-  /* Main content */
   .main-content {
     padding: 2rem;
     text-align: center;
@@ -65,26 +57,41 @@
   .main-content h1 {
     color: #000;
     font-size: 2rem;
+    margin-bottom: 1rem;
   }
   .main-content p {
-    color: #444;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+    font-size: 1.1rem;
   }
   .cta-btn {
     padding: 0.8rem 1.5rem;
-    background: #FFD700;
-    border: none;
+    background: #fff;
+    border: 2px solid #333;
     color: #000;
     cursor: pointer;
     font-weight: bold;
     border-radius: 0.5rem;
     margin-top: 1rem;
-    transition: transform 0.2s;
+    transition: background 0.3s;
   }
   .cta-btn:hover {
-    transform: scale(1.05);
+    background: #333;
+    color: #fff;
   }
-
-  /* Modal for website options */
+  .images-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+  .images-section img {
+    width: 200px;
+    border-radius: 0.5rem;
+    border: 2px solid #333;
+  }
   .modal {
     position: fixed;
     top: 0;
@@ -96,23 +103,75 @@
     align-items: center;
     justify-content: center;
   }
-  .modal.open {
-    display: flex;
-  }
+  .modal.open { display: flex; }
   .modal-content {
-    background: #000;
+    background: #555;
     padding: 2rem;
     border-radius: 1rem;
     color: #fff;
     text-align: center;
   }
   .modal-content button {
-    background: #FFD700;
+    background: #fff;
+    color: #000;
     border: none;
-    padding: 0.8rem 1rem;
-    margin: 0.5rem;
+    padding: 0.8rem 1.2rem;
     border-radius: 0.4rem;
     cursor: pointer;
+    font-weight: bold;
+    margin: 0.5rem;
+  }
+  .modal-content button:hover {
+    background: #333;
+    color: #fff;
+  }
+
+  /* 🎨 Services Section */
+  .services-section {
+    background: #ddd;
+    padding: 2rem;
+    border-radius: 1rem;
+    color: #000;
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .services-section h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+  }
+  .services-section .tagline {
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+  .services-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .service-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin: 0 auto 1.5rem;
+    max-width: 320px;
+  }
+  .service-list li {
+    background: #eee;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.3rem;
+    margin: 0.3rem 0;
+  }
+  .images-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .images-row .img-box {
+    width: 150px;
+    border: 2px solid #333;
+    border-radius: 0.5rem;
   }
 </style>
 </head>
@@ -136,12 +195,40 @@
   <a href="#">Our services</a>
 </div>
 
-<!-- Main content -->
+<!-- Main Content -->
 <div class="main-content">
-  <h1>RemiderNova Dashboard</h1>
-  <p>Welcome to your dashboard. Ready to build your next great project?</p>
+  <h1>Welcome to RemiderNova</h1>
+  <p>
+    We offer premium and affordable web solutions tailored to your business.  
+    Whether you need a free personal website or a professionally designed premium one, we’ve got you covered.
+  </p>
   <button class="cta-btn" onclick="openModal()">Create Now</button>
+
+  <div class="images-section">
+    <img src="https://via.placeholder.com/200x120?text=Logo+Design" alt="Logo Design">
+    <img src="https://via.placeholder.com/200x120?text=Website+Design" alt="Website Design">
+    <img src="https://via.placeholder.com/200x120?text=Demo+Mode" alt="Demo Mode">
+    <img src="https://via.placeholder.com/200x120?text=Branding" alt="Our Branding">
+  </div>
 </div>
+
+<!-- 🎨 Services Section -->
+<section class="services-section">
+  <h1>REMIDERNOVA SERVICES</h1>
+  <p class="tagline">Always Affordable!</p>
+  <h2>SERVICES WE OFFER:</h2>
+  <ul class="service-list">
+    <li>✔️ 24/7 Customer Service</li>
+    <li>✔️ Website Builder</li>
+    <li>✔️ Free Custom Domain</li>
+    <li>✔️ Chatbot & AI</li>
+    <li>✔️ Premium Plans</li>
+  </ul>
+  <div class="images-row">
+    <img src="our-logo.png" alt="Your Logo" class="img-box" />
+    <img src="our-price-list.png" alt="Price List" class="img-box" />
+  </div>
+</section>
 
 <!-- Modal -->
 <div class="modal" id="modal">
@@ -171,4 +258,4 @@
   }
 </script>
 </body>
-</html>
+    </html>
