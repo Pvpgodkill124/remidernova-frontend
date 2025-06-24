@@ -7,7 +7,7 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: url('login.png') center/cover fixed no-repeat;
+    background: url('your-image-url-here') center/cover fixed no-repeat;
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -76,12 +76,13 @@
   <p>Already have an account? <a id="to-login">Log In</a></p>
 </div>
 
-<!-- Firebase & Firestore -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
-<script>
-  // 🧠 Replace with YOUR Firebase config
+<!-- Firebase SDK -->
+<script type="module">
+  // Import Firestore & Auth SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
     authDomain: "remidernova-login.firebaseapp.com",
@@ -91,10 +92,9 @@
     appId: "1:304712721460:web:4a0d8fd8c0518b49de1661",
     measurementId: "G-JDB6DHY3K7"
   };
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth(app);
-  const db = firebase.firestore(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
   const loginContainer = document.getElementById('login-container');
   const signupContainer = document.getElementById('signup-container');
@@ -142,13 +142,9 @@
     }
 
     try {
-      // Create auth user
-      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
-
-      // Save profile to Firestore
-      await db.collection('users').doc(uid).set({ username, email });
-
+      await setDoc(doc(db, "users", uid), { username, email });
       alert('Sign up successful — please log in.');
       signupContainer.style.display = 'none';
       loginContainer.style.display = 'block';
@@ -170,8 +166,7 @@
     }
 
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      alert('Login successful — redirecting...');
+      await signInWithEmailAndPassword(auth, email, password);
       window.location.href = 'dashboard.html';
     } catch (e) {
       errorEl.textContent = e.message || 'Error logging in';
