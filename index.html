@@ -7,13 +7,12 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: url('login.png') center/cover fixed no-repeat;
+    background: url(login.png) center/cover fixed no-repeat;
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
+    color: white;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
   }
   .container {
     background: rgba(0,0,0,0.7);
@@ -21,71 +20,55 @@
     border-radius: 1rem;
     width: 100%;
     max-width: 320px;
-    color: #fff;
   }
-  h2 { text-align: center; margin-bottom: 1rem; color: #FFD700; }
+  h2 { text-align: center; margin-bottom: 1rem; }
   input, button {
     width: 100%;
     padding: 0.8rem;
     margin: 0.3rem 0;
     border: none;
     border-radius: 0.4rem;
-    font-size: 1rem;
   }
-  input {
-    background: transparent;
-    border-bottom: 1px solid #fff;
-    color: #fff;
-    padding-left: 0;
-  }
-  input::placeholder { color: #ccc; }
   button {
-    background-color: #FFD700;
+    background-color: orange;
     color: #000;
     cursor: pointer;
     font-weight: bold;
   }
-  a {
-    color: #FFD700;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .error { color: red; font-size: 0.9rem; margin:0.3rem 0; }
-  p { text-align: center; }
+  a { color: lightblue; cursor: pointer; text-decoration: underline; }
+  .error { color: red; font-size: 0.9rem; }
 </style>
 </head>
 <body>
 
-<!-- Login -->
-<div class="container" id="login-container">
-  <h2>Log In</h2>
-  <div class="error" id="login-error"></div>
-  <input id="login-email" placeholder="Email" type="email" />
-  <input id="login-password" placeholder="Password" type="password" />
-  <button id="login-btn">Log In</button>
-  <p><a id="to-reset">Forgot password?</a></p>
-  <p>Need an account? <a id="to-signup">Sign Up</a></p>
-</div>
+  <!-- Sign-Up -->
+  <div class="container" id="signup-container">
+    <h2>Sign Up</h2>
+    <div class="error" id="signup-error"></div>
+    <input id="signup-username" placeholder="Username" type="text" />
+    <input id="signup-email" placeholder="Email" type="email" />
+    <input id="signup-password" placeholder="Password" type="password" />
+    <button id="signup-btn">Sign Up</button>
+    <p>Already have an account? <a id="to-login">Log In</a></p>
+  </div>
 
-<!-- Sign-Up -->
-<div class="container" id="signup-container" style="display:none;">
-  <h2>Sign Up</h2>
-  <div class="error" id="signup-error"></div>
-  <input id="signup-username" placeholder="Username" type="text" />
-  <input id="signup-password" placeholder="Password" type="password" />
-  <input id="signup-confirm" placeholder="Confirm Password" type="password" />
-  <input id="signup-email" placeholder="Email" type="email" />
-  <button id="signup-btn">Sign Up</button>
-  <p>Already have an account? <a id="to-login">Log In</a></p>
-</div>
+  <!-- Log-In -->
+  <div class="container" id="login-container" style="display:none;">
+    <h2>Log In</h2>
+    <div class="error" id="login-error"></div>
+    <input id="login-email" placeholder="Email" type="email" />
+    <input id="login-password" placeholder="Password" type="password" />
+    <button id="login-btn">Log In</button>
+    <p>Need an account? <a id="to-signup">Sign Up</a></p>
+  </div>
 
-<!-- Firebase SDKs -->
+<!-- Firebase + Firestore -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js";
   import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js";
 
-  // Firebase config
+  // 🧠 Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
     authDomain: "remidernova-login.firebaseapp.com",
@@ -99,83 +82,72 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const loginContainer = document.getElementById('login-container');
-    const signupContainer = document.getElementById('signup-container');
+  const signupContainer = document.getElementById('signup-container');
+  const loginContainer = document.getElementById('login-container');
 
-    document.getElementById('to-signup').onclick = () => {
-      loginContainer.style.display = 'none';
-      signupContainer.style.display = 'block';
-    };
-    document.getElementById('to-login').onclick = () => {
+  document.getElementById('to-login').onclick = () => {
+    signupContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+  };
+  document.getElementById('to-signup').onclick = () => {
+    loginContainer.style.display = 'none';
+    signupContainer.style.display = 'block';
+  };
+
+  // Signup handler
+  document.getElementById('signup-btn').onclick = async () => {
+    const username = document.getElementById('signup-username').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value.trim();
+    const errorEl = document.getElementById('signup-error');
+    errorEl.textContent = '';
+    if (!username || !email || !password) {
+      errorEl.textContent = 'All fields required';
+      return;
+    }
+    if (username.length < 5) {
+      errorEl.textContent = 'Username must be at least 5 chars';
+      return;
+    }
+    if (password.length < 6) {
+      errorEl.textContent = 'Password must be at least 6 chars';
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      errorEl.textContent = 'Invalid email address';
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, "users", userCredential.user.uid), { username, email });
+      alert('Sign up successful — you can log in now.');
       signupContainer.style.display = 'none';
       loginContainer.style.display = 'block';
-    };
-    document.getElementById('to-reset').onclick = () => {
-      alert('Reset password feature coming soon.');
-    };
+    } catch (e) {
+      errorEl.textContent = e.message;
+    }
+  };
 
-    // Sign-Up
-    document.getElementById('signup-btn').onclick = async () => {
-      const username = document.getElementById('signup-username').value.trim();
-      const password = document.getElementById('signup-password').value;
-      const confirm = document.getElementById('signup-confirm').value;
-      const email = document.getElementById('signup-email').value.trim();
-      const errorEl = document.getElementById('signup-error');
-      errorEl.textContent = '';
+  // Login handler
+  document.getElementById('login-btn').onclick = async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const errorEl = document.getElementById('login-error');
+    errorEl.textContent = '';
+    if (!email || !password) {
+      errorEl.textContent = 'Please fill all required fields';
+      return;
+    }
 
-      if (!username || !password || !confirm || !email) {
-        errorEl.textContent = 'Please fill all required fields';
-        return;
-      }
-      if (username.length < 5) {
-        errorEl.textContent = 'Username must be at least 5 characters';
-        return;
-      }
-      if (password.length < 6) {
-        errorEl.textContent = 'Password must be at least 6 characters';
-        return;
-      }
-      if (password !== confirm) {
-        errorEl.textContent = 'Passwords do not match';
-        return;
-      }
-      if (!/\S+@\S+\.\S+/.test(email)) {
-        errorEl.textContent = 'Please enter a valid email address';
-        return;
-      }
-
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", userCredential.user.uid), { username, email });
-        alert('Sign up successful — please log in.');
-        signupContainer.style.display = 'none';
-        loginContainer.style.display = 'block';
-      } catch (e) {
-        errorEl.textContent = e.message || 'Error signing up';
-      }
-    };
-
-    // Log-In
-    document.getElementById('login-btn').onclick = async () => {
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-      const errorEl = document.getElementById('login-error');
-      errorEl.textContent = '';
-
-      if (!email || !password) {
-        errorEl.textContent = 'Please fill all required fields';
-        return;
-      }
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = 'dashboard.html';
-      } catch (e) {
-        errorEl.textContent = e.message || 'Error logging in';
-      }
-    };
-  });
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert('Login successful — redirecting...');
+      window.location.href = '/dashboard.html';
+    } catch (e) {
+      errorEl.textContent = e.message;
+    }
+  };
 </script>
 </body>
 </html>
