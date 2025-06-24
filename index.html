@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login & Sign Up</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #222;
+    min-height: 100vh;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container {
+    background: rgba(0,0,0,0.7);
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 320px;
+  }
+  h2 { text-align: center; margin-bottom: 1rem; }
+  input, button {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.3rem 0;
+    border: none;
+    border-radius: 0.4rem;
+  }
+  button {
+    background-color: orange;
+    color: #000;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  a { color: lightblue; cursor: pointer; text-decoration: underline; }
+  .error { color: red; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+  <!-- Sign-Up -->
+  <div class="container" id="signup-container">
+    <h2>Sign Up</h2>
+    <div class="error" id="signup-error"></div>
+    <input id="signup-email" placeholder="Email" type="email" />
+    <input id="signup-password" placeholder="Password" type="password" />
+    <button id="signup-btn">Sign Up</button>
+    <p>Already have an account? <a id="to-login">Log In</a></p>
+  </div>
+
+  <!-- Log-In -->
+  <div class="container" id="login-container" style="display:none;">
+    <h2>Log In</h2>
+    <div class="error" id="login-error"></div>
+    <input id="login-email" placeholder="Email" type="email" />
+    <input id="login-password" placeholder="Password" type="password" />
+    <button id="login-btn">Log In</button>
+    <p>Need an account? <a id="to-signup">Sign Up</a></p>
+  </div>
+
+<script>
+  const signupContainer = document.getElementById('signup-container');
+  const loginContainer = document.getElementById('login-container');
+
+  document.getElementById('to-login').onclick = () => {
+    signupContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+  };
+  document.getElementById('to-signup').onclick = () => {
+    loginContainer.style.display = 'none';
+    signupContainer.style.display = 'block';
+  };
+
+  // Sign up handler
+  document.getElementById('signup-btn').onclick = async () => {
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value.trim();
+    const errorEl = document.getElementById('signup-error');
+    errorEl.textContent = '';
+    if (!email || !password) {
+      errorEl.textContent = 'Email & password required';
+      return;
+    }
+
+    try {
+      const res = await fetch('https://marble-nonchalant-yellowhorn.glitch.me/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('idToken', data.idToken);
+        alert('Sign up successful — redirecting...');
+        window.location.href = '/dashboard.html';
+      } else {
+        errorEl.textContent = data.error?.message || 'Error signing up';
+      }
+    } catch (e) {
+      errorEl.textContent = 'Network error — please check your connection';
+    }
+  };
+
+  // Log in handler
+  document.getElementById('login-btn').onclick = async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const errorEl = document.getElementById('login-error');
+    errorEl.textContent = '';
+    if (!email || !password) {
+      errorEl.textContent = 'Email & password required';
+      return;
+    }
+
+    try {
+      const res = await fetch('https://marble-nonchalant-yellowhorn.glitch.me/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('idToken', data.idToken);
+        alert('Login successful — redirecting...');
+        window.location.href = '/dashboard.html';
+      } else {
+        errorEl.textContent = data.error?.message || 'Error logging in';
+      }
+    } catch (e) {
+      errorEl.textContent = 'Network error — please check your connection';
+    }
+  };
+</script>
+</body>
+</html>
