@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RemiderNova Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* colorful gradient */
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .navbar {
+    padding: 0.8rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .navbar .profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff center/cover no-repeat;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+  .navbar .menu {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .menu-line {
+    width: 28px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    padding-top: 2rem;
+    transition: left 0.4s ease;
+    z-index: 999;
+  }
+  .sidebar.open { left: 0; }
+  .sidebar a {
+    display: block;
+    padding: 1rem;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    transition: background 0.3s;
+  }
+  .sidebar a:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .main-content {
+    padding: 3rem 1rem;
+    text-align: center;
+  }
+  .main-content h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.8rem;
+    color: #fff;
+  }
+  .main-content p {
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    color: #f9f9f9;
+    font-size: 1.1rem;
+  }
+  .cta-btn {
+    padding: 0.8rem 2rem;
+    background: #fff;
+    color: #ff7e5f;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  .cta-btn:hover {
+    background: #ffe4d7;
+  }
+
+  /* Services section */
+  .services-section {
+    background: rgba(255,255,255,0.2);
+    padding: 2rem;
+    margin: 2rem auto;
+    border-radius: 1rem;
+    max-width: 600px;
+    text-align: left;
+  }
+  .services-section h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+  .service-list {
+    list-style: none;
+    padding: 0;
+  }
+  .service-list li {
+    padding: 0.3rem 0;
+  }
+  .images-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .images-row img {
+    width: 140px;
+    border-radius: 0.3rem;
+    border: 2px solid #fff;
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+    display: none;
+    z-index: 1000;
+  }
+  .modal.open { display: flex; }
+  .modal-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    display: flex;
+    gap: 2rem;
+  }
+  .modal-content a {
+    padding: 0.8rem 1.5rem;
+    background: #ff7e5f;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: bold;
+  }
+  .modal-content a:hover {
+    background: #ff623f;
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="profile" id="user-profile" onclick="location.href='profile.html'"></div>
+  <div class="menu" id="menu-toggle">
+    <div class="menu-line"></div>
+    <div class="menu-line"></div>
+    <div class="menu-line"></div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <a href="domain.html">Our Domains</a>
+  <a href="ourwebsite.html">Our Website</a>
+  <a href="sellproduct.html">Our Selling Products</a>
+  <a href="brand.html">Our Brand</a>
+  <a href="demo.html">Try Our Demo Mode</a>
+  <a href="linux.html">Linux Setup</a>
+  <a href="plans.html">Premium Plans</a>
+  <a href="services.html">Our Services</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <h1>Welcome to RemiderNova</h1>
+  <p>RemiderNova is your one-stop solution for affordable, professional websites — built with dedicated support, chatbots, and premium features to help your business grow.</p>
+  <button class="cta-btn" onclick="openModal()">Create Now</button>
+</div>
+
+<!-- Services -->
+<section class="services-section">
+  <h2>SERVICES WE OFFER:</h2>
+  <ul class="service-list">
+    <li>✔️ 24/7 Customer Service</li>
+    <li>✔️ Website Building</li>
+    <li>✔️ Free Custom Domain</li>
+    <li>✔️ Chatbot & AI</li>
+    <li>✔️ Premium Plans</li>
+  </ul>
+  <div class="images-row">
+    <img src="your-logo.png" alt="Your Logo">
+    <img src="your-price-list.png" alt="Price List">
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="modal" id="modal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <a href="free-website.html">Free Website</a>
+    <a href="premium-website.html">Premium Website</a>
+  </div>
+</div>
+
+<script>
+  // Sidebar & Modal
+  const sidebar = document.getElementById('sidebar');
+  const menuToggle = document.getElementById('menu-toggle');
+  const modal = document.getElementById('modal');
+
+  menuToggle.onclick = () => sidebar.classList.toggle('open');
+  function openModal() { modal.classList.add('open'); }
+  function closeModal() { modal.classList.remove('open'); }
+</script>
+
+<!-- Firebase auth check -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
+    authDomain: "remidernova-login.firebaseapp.com",
+    projectId: "remidernova-login",
+    storageBucket: "remidernova-login.firebasestorage.app",
+    messagingSenderId: "304712721460",
+    appId: "1:304712721460:web:2ab74eccc3b2de33de1661"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+      window.location.href = "index.html";
+    } else if (user.photoURL) {
+      document.getElementById('user-profile').style.backgroundImage = `url(${user.photoURL})`;
+    }
+  });
+</script>
+
+</body>
+</html>
