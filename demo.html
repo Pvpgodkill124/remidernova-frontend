@@ -3,99 +3,84 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Free Website Demo</title>
+<title>Demo/Free Website</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(45deg, #6B46C1, #ED64A6);
-    min-height: 100vh;
-    padding: 2rem;
+    background: #222;
     color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .chat-container {
-    background: rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
     padding: 2rem;
-    border-radius: 1rem;
-    width: 100%;
-    max-width: 400px;
-  }
-  h1 {
     text-align: center;
-    margin-bottom: 1rem;
   }
-  label {
-    margin: 0.5rem 0 0.2rem;
-    font-size: 0.9rem;
-    display: block;
-  }
-  select, input, textarea, button {
+  select, button {
+    padding: 0.8rem;
     width: 100%;
-    padding: 0.7rem;
+    max-width: 320px;
     border: none;
-    border-radius: 0.3rem;
-    margin-bottom: 0.8rem;
-    font-size: 1rem;
+    border-radius: 0.4rem;
+    margin: 0.5rem 0;
   }
-  select, input, textarea {
-    background: #fff;
-    color: #000;
+  select {
+    background: #333;
+    color: #fff;
   }
   button {
-    background: #FFD700;
+    background: orange;
     color: #000;
-    font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
   }
-  button:hover {
-    background: #ffef5e;
-  }
-  .bot-message {
+  .confirmation {
+    margin-top: 1.5rem;
     background: #333;
     padding: 1rem;
     border-radius: 0.5rem;
-    white-space: pre-line;
+    display: none;
   }
 </style>
 </head>
 <body>
-<h1 id="welcome-message">👋 Hello!</h1>
-<div class="chat-container">
-  <div id="inputs-container">
-    <label>Topic:</label>
-    <input id="topic" placeholder="e.g. Photography site" />
+<h1>Demo/Free Website</h1>
 
-    <label>For:</label>
-    <select id="type">
-      <option value="Business">Business</option>
-      <option value="Personal">Personal</option>
-      <option value="Portfolio">Portfolio</option>
-    </select>
+<label>For:</label>
+<select id="website-type">
+  <option value="portfolio">Portfolio</option>
+  <option value="blog">Blog</option>
+  <option value="business">Business Site</option>
+  <option value="e-commerce">E-commerce</option>
+  <option value="event">Event Page</option>
+  <option value="restaurant">Restaurant</option>
+  <option value="landing">Landing Page</option>
+  <option value="personal">Personal Website</option>
+  <option value="education">Education</option>
+  <option value="travel">Travel</option>
+  <option value="fitness">Fitness</option>
+  <option value="music">Music</option>
+  <option value="photography">Photography</option>
+  <option value="nonprofit">Non-Profit</option>
+  <option value="other">Other</option>
+</select>
 
-    <label>Theme:</label>
-    <select id="theme">
-      <option value="Modern">Modern</option>
-      <option value="Creative">Creative</option>
-      <option value="Professional">Professional</option>
-    </select>
+<label>Theme:</label>
+<select id="theme-option">
+  <option value="minimal">Minimal</option>
+  <option value="dark-mode">Dark Mode</option>
+  <option value="colorful">Colorful</option>
+  <option value="elegant">Elegant</option>
+  <option value="fun">Fun</option>
+  <option value="modern">Modern</option>
+  <option value="classic">Classic</option>
+  <option value="techy">Techy</option>
+</select>
 
-    <label>Domain Name (c0m.in):</label>
-    <input id="domain" placeholder="e.g. mybrand" />
+<button id="submit-btn">Submit Request</button>
 
-    <label>Extra Details:</label>
-    <textarea id="extra" placeholder="Anything extra you’d like"></textarea>
+<div class="confirmation" id="confirmation-box"></div>
 
-    <button onclick="submitData()">Submit Request</button>
-  </div>
-</div>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
+<!-- Firebase setup -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
@@ -103,45 +88,43 @@
     projectId: "remidernova-login",
     storageBucket: "remidernova-login.firebasestorage.app",
     messagingSenderId: "304712721460",
-    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661"
+    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661",
+    measurementId: "G-JDB6DHY3K7"
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  let username = "User";
+  document.getElementById('submit-btn').onclick = async () => {
+    const websiteType = document.getElementById('website-type').value;
+    const theme = document.getElementById('theme-option').value;
 
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) return window.location.href='index.html';
-    const doc = await db.collection('users').doc(user.uid).get();
-    username = doc.exists ? doc.data().username : "User";
-    document.getElementById('welcome-message').innerText = `👋 Hello ${username}, plan your free website!`;
-  });
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const username = (await db.collection('users').doc(user.uid).get()).data().username;
 
-  async function submitData() {
-    const topic = document.getElementById('topic').value.trim();
-    const type = document.getElementById('type').value;
-    const theme = document.getElementById('theme').value;
-    const domain = document.getElementById('domain').value.trim();
-    const extra = document.getElementById('extra').value.trim();
+        // Save selection to Firestore
+        await db.collection('demoRequests').add({
+          uid: user.uid,
+          username,
+          websiteType,
+          theme,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
 
-    if(!topic || !domain) {
-      alert('Please fill the required fields.');
-      return;
-    }
-
-    const summary = `
-      🎉 Got it!
-      Topic: ${topic}
-      For: ${type}
-      Theme: ${theme}
-      Domain: ${domain}.c0m.in
-      Extra: ${extra || 'None'}
-      ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊
-      💡 Check out our Premium Plans for faster and better results!
-    `;
-    document.getElementById('inputs-container').innerHTML = `<div class="bot-message">${summary}</div>`;
-  }
+        // Show confirmation
+        const confirmationBox = document.getElementById('confirmation-box');
+        confirmationBox.innerHTML = `
+          ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊<br>
+          💡 Check out our <a href="premium-plans.html" style="color: orange;">Premium Plans</a> for faster and better results!
+        `;
+        confirmationBox.style.display = 'block';
+      } else {
+        alert('You need to log in first.');
+        window.location.href = 'index.html';
+      }
+    });
+  };
 </script>
 </body>
-  </html>
+</html>
