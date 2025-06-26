@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Free Website Demo</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(45deg, #6B46C1, #ED64A6);
+    min-height: 100vh;
+    padding: 2rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .chat-container {
+    background: rgba(0,0,0,0.5);
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  label {
+    margin: 0.5rem 0 0.2rem;
+    font-size: 0.9rem;
+    display: block;
+  }
+  select, input, textarea, button {
+    width: 100%;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 0.3rem;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+  select, input, textarea {
+    background: #fff;
+    color: #000;
+  }
+  button {
+    background: #FFD700;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #ffef5e;
+  }
+  .bot-message {
+    background: #333;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    white-space: pre-line;
+  }
+</style>
+</head>
+<body>
+<h1 id="welcome-message">👋 Hello!</h1>
+<div class="chat-container">
+  <div id="inputs-container">
+    <label>Topic:</label>
+    <input id="topic" placeholder="e.g. Photography site" />
+
+    <label>For:</label>
+    <select id="type">
+      <option value="Business">Business</option>
+      <option value="Personal">Personal</option>
+      <option value="Portfolio">Portfolio</option>
+    </select>
+
+    <label>Theme:</label>
+    <select id="theme">
+      <option value="Modern">Modern</option>
+      <option value="Creative">Creative</option>
+      <option value="Professional">Professional</option>
+    </select>
+
+    <label>Domain Name (c0m.in):</label>
+    <input id="domain" placeholder="e.g. mybrand" />
+
+    <label>Extra Details:</label>
+    <textarea id="extra" placeholder="Anything extra you’d like"></textarea>
+
+    <button onclick="submitData()">Submit Request</button>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
+    authDomain: "remidernova-login.firebaseapp.com",
+    projectId: "remidernova-login",
+    storageBucket: "remidernova-login.firebasestorage.app",
+    messagingSenderId: "304712721460",
+    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let username = "User";
+
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) return window.location.href='index.html';
+    const doc = await db.collection('users').doc(user.uid).get();
+    username = doc.exists ? doc.data().username : "User";
+    document.getElementById('welcome-message').innerText = `👋 Hello ${username}, plan your free website!`;
+  });
+
+  async function submitData() {
+    const topic = document.getElementById('topic').value.trim();
+    const type = document.getElementById('type').value;
+    const theme = document.getElementById('theme').value;
+    const domain = document.getElementById('domain').value.trim();
+    const extra = document.getElementById('extra').value.trim();
+
+    if(!topic || !domain) {
+      alert('Please fill the required fields.');
+      return;
+    }
+
+    const summary = `
+      🎉 Got it!
+      Topic: ${topic}
+      For: ${type}
+      Theme: ${theme}
+      Domain: ${domain}.c0m.in
+      Extra: ${extra || 'None'}
+      ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊
+      💡 Check out our Premium Plans for faster and better results!
+    `;
+    document.getElementById('inputs-container').innerHTML = `<div class="bot-message">${summary}</div>`;
+  }
+</script>
+</body>
+  </html>
