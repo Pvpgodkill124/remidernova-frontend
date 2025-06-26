@@ -39,13 +39,12 @@
   .error { color: red; font-size: 0.9rem; }
 </style>
 
-<!-- Firebase scripts -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
+<!-- ✅ Firebase v8.x scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
 <script>
-  // ✅ Your Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
     authDomain: "remidernova-login.firebaseapp.com",
@@ -55,8 +54,7 @@
     appId: "1:304712721460:web:4a0d8fd8c0518b49de1661",
     measurementId: "G-JDB6DHY3K7"
   };
-  // ✅ Initialize Firebase and its services
-  const app = firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
 </script>
@@ -87,6 +85,8 @@
 <script>
   const signupContainer = document.getElementById('signup-container');
   const loginContainer = document.getElementById('login-container');
+  const signupError = document.getElementById('signup-error');
+  const loginError = document.getElementById('login-error');
 
   document.getElementById('to-login').onclick = () => {
     signupContainer.style.display = 'none';
@@ -98,12 +98,11 @@
   };
 
   document.getElementById('signup-btn').onclick = async () => {
+    signupError.textContent = '';
     const username = document.getElementById('signup-username').value.trim();
     const email = document.getElementById('signup-email').value.trim();
     const password = document.getElementById('signup-password').value.trim();
-    const signupError = document.getElementById('signup-error');
 
-    signupError.textContent = '';
     if (!username || !email || !password) {
       signupError.textContent = 'Please fill all the required fields';
       return;
@@ -116,28 +115,28 @@
     try {
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       await db.collection('users').doc(userCredential.user.uid).set({ username, email });
+
       alert('Sign up successful — redirecting...');
-      window.location.href = '/dashboard.html';
+      setTimeout(() => { window.location.href = '/dashboard.html'; }, 1000);
     } catch (e) {
       signupError.textContent = e.message;
     }
   };
 
   document.getElementById('login-btn').onclick = async () => {
-    const loginEmail = document.getElementById('login-email').value.trim();
-    const loginPassword = document.getElementById('login-password').value.trim();
-    const loginError = document.getElementById('login-error');
-
     loginError.textContent = '';
-    if (!loginEmail || !loginPassword) {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+
+    if (!email || !password) {
       loginError.textContent = 'Email & password required';
       return;
     }
 
     try {
-      await auth.signInWithEmailAndPassword(loginEmail, loginPassword);
+      await auth.signInWithEmailAndPassword(email, password);
       alert('Login successful — redirecting...');
-      window.location.href = '/dashboard.html';
+      setTimeout(() => { window.location.href = '/dashboard.html'; }, 1000);
     } catch (e) {
       loginError.textContent = e.message;
     }
