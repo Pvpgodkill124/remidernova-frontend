@@ -116,7 +116,7 @@
       await db.collection('users').doc(userCredential.user.uid).set({
         username: username,
         email: email,
-        avatarUrl: 'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/default.png'
+        avatarUrl: 'avatars/default.png'
       });
 
       alert('Sign up successful — redirecting...');
