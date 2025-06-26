@@ -6,52 +6,53 @@
 <title>Demo/Free Website</title>
 <style>
   body {
-    background: #222;
+    background: #000;
     color: #fff;
     font-family: Arial, sans-serif;
     padding: 2rem;
     text-align: center;
   }
-  select, button {
-    padding: 0.8rem;
+  h1 { color: #FFD700; margin-bottom: 1rem; }
+  input, select, textarea, button {
     width: 100%;
     max-width: 320px;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
     border: none;
     border-radius: 0.4rem;
-    margin: 0.5rem 0;
   }
-  select {
-    background: #333;
-    color: #fff;
-  }
+  input, select, textarea { background: #222; color: #fff; }
   button {
-    background: orange;
+    background: #FFD700;
     color: #000;
-    cursor: pointer;
     font-weight: bold;
+    cursor: pointer;
   }
+  button:hover { background: #e6c200; }
   .confirmation {
     margin-top: 1.5rem;
-    background: #333;
     padding: 1rem;
+    background: #222;
+    border: 1px solid #FFD700;
     border-radius: 0.5rem;
     display: none;
   }
 </style>
 </head>
 <body>
+
 <h1>Demo/Free Website</h1>
 
+<!-- NEW options -->
 <label>For:</label>
 <select id="website-type">
   <option value="portfolio">Portfolio</option>
   <option value="blog">Blog</option>
-  <option value="business">Business Site</option>
+  <option value="business">Business</option>
   <option value="e-commerce">E-commerce</option>
-  <option value="event">Event Page</option>
+  <option value="event">Event</option>
   <option value="restaurant">Restaurant</option>
   <option value="landing">Landing Page</option>
-  <option value="personal">Personal Website</option>
   <option value="education">Education</option>
   <option value="travel">Travel</option>
   <option value="fitness">Fitness</option>
@@ -73,6 +74,16 @@
   <option value="techy">Techy</option>
 </select>
 
+<!-- ORIGINAL fields -->
+<label>Topic:</label>
+<input id="topic" placeholder="Your website's topic..." type="text" />
+
+<label>Domain Name (no extension):</label>
+<input id="domain-name" placeholder="Your desired domain name" type="text" />
+
+<label>Extra Info:</label>
+<textarea id="extra-info" placeholder="Any additional information or requests..."></textarea>
+
 <button id="submit-btn">Submit Request</button>
 
 <div class="confirmation" id="confirmation-box"></div>
@@ -88,8 +99,7 @@
     projectId: "remidernova-login",
     storageBucket: "remidernova-login.firebasestorage.app",
     messagingSenderId: "304712721460",
-    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661",
-    measurementId: "G-JDB6DHY3K7"
+    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661"
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
@@ -98,25 +108,19 @@
   document.getElementById('submit-btn').onclick = async () => {
     const websiteType = document.getElementById('website-type').value;
     const theme = document.getElementById('theme-option').value;
+    const topic = document.getElementById('topic').value.trim();
+    const domainName = document.getElementById('domain-name').value.trim();
+    const extraInfo = document.getElementById('extra-info').value.trim();
 
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const username = (await db.collection('users').doc(user.uid).get()).data().username;
+        await db.collection('demoRequests').add({ uid: user.uid, username, websiteType, theme, topic, domainName, extraInfo, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
 
-        // Save selection to Firestore
-        await db.collection('demoRequests').add({
-          uid: user.uid,
-          username,
-          websiteType,
-          theme,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-
-        // Show confirmation
         const confirmationBox = document.getElementById('confirmation-box');
         confirmationBox.innerHTML = `
           ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊<br>
-          💡 Check out our <a href="premium-plans.html" style="color: orange;">Premium Plans</a> for faster and better results!
+          💡 Check out our <a href="plans.html" style="color:#FFD700;">Premium Plans</a> for faster and better results!
         `;
         confirmationBox.style.display = 'block';
       } else {
