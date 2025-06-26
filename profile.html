@@ -39,7 +39,6 @@
     border-radius: 0.5rem;
     text-decoration: none;
   }
-  /* Modal overlay */
   .overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -55,8 +54,10 @@
     gap: 0.5rem;
   }
   .avatar-gallery img {
-    width: 60px; height: 60px; cursor: pointer;
-    border-radius: 50%; border: 2px solid #fff;
+    width: 60px; height: 60px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #fff;
   }
 </style>
 </head>
@@ -67,7 +68,7 @@
     <p><a href="https://discord.gg/yourdiscordlink" class="join-discord">Join Us On Discord</a></p>
   </div>
 
-  <!-- Avatar Gallery Overlay -->
+  <!-- Avatar Overlay -->
   <div class="overlay" id="avatar-overlay">
     <div class="avatar-gallery" id="avatar-gallery"></div>
   </div>
@@ -95,17 +96,17 @@
   const avatarGallery = document.getElementById('avatar-gallery');
 
   const avatars = [
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/default.png',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar1.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar2.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar3.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar4.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar5.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar6.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar7.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar8.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar9.jpg',
-    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar10.jpg'
+    'avatars/default.png',
+    'avatars/avatar1.jpg',
+    'avatars/avatar2.jpg',
+    'avatars/avatar3.jpg',
+    'avatars/avatar4.jpg',
+    'avatars/avatar5.jpg',
+    'avatars/avatar6.jpg',
+    'avatars/avatar7.jpg',
+    'avatars/avatar8.jpg',
+    'avatars/avatar9.jpg',
+    'avatars/avatar10.jpg'
   ];
 
   auth.onAuthStateChanged(async (user) => {
