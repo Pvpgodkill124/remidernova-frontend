@@ -12,166 +12,162 @@
     min-height: 100vh;
     padding: 2rem;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
   }
-
-  #demo-form {
+  .container {
     background: #333;
     padding: 2rem;
     border-radius: 1rem;
-    max-width: 400px;
     width: 100%;
-    opacity: 1;
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    opacity: 0;
+    transform: translateY(-50px);
+    animation: dropIn 0.7s forwards;
   }
-
-  h2 {
-    text-align: center;
-    color: orange;
-    margin-bottom: 1rem;
+  @keyframes dropIn {
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  label {
-    display: block;
-    margin-top: 0.8rem;
-    margin-bottom: 0.3rem;
-    font-size: 0.9rem;
-  }
-
+  h2 { text-align: center; margin-bottom: 1rem; color: orange; }
+  label { display: block; margin-top: 0.8rem; }
   select, input, textarea, button {
     width: 100%;
     padding: 0.7rem;
+    margin-top: 0.3rem;
     border: none;
     border-radius: 0.4rem;
-    margin-bottom: 0.5rem;
-  }
-
-  select, input, textarea {
-    background: #444;
+    background: #555;
     color: #fff;
   }
-
   button {
     background: orange;
     color: #000;
     cursor: pointer;
     font-weight: bold;
+    transition: transform 0.3s;
   }
-
-  /* Bounce & Spinner */
-  .bounce {
-    animation: bounce 0.5s ease;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-
+  button.bounce { transform: scale(1.1); }
   .spinner {
-    width: 40px;
-    height: 40px;
-    border: 5px solid rgba(255,255,255,0.3);
-    border-top-color: orange;
+    border: 2px solid #ccc;
+    border-top: 2px solid #000;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    width: 20px; height: 20px;
+    animation: spin 0.7s linear infinite;
     margin: 1rem auto;
   }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
+  @keyframes spin { to { transform: rotate(360deg); } }
   .success-box {
-    opacity: 0;
-    background: green;
-    padding: 1.5rem;
-    border-radius: 1rem;
+    background: #0a0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    color: #fff;
     text-align: center;
-    animation: fadeIn 0.8s ease forwards;
+    font-size: 1.1rem;
+    animation: pop 0.5s forwards;
   }
-
-  @keyframes fadeIn {
-    to { opacity: 1; }
+  @keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .success-box a {
+    color: orange;
+    text-decoration: underline;
   }
 </style>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
+    authDomain: "remidernova-login.firebaseapp.com",
+    projectId: "remidernova-login",
+    storageBucket: "remidernova-login.firebasestorage.app",
+    messagingSenderId: "304712721460",
+    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661"
+  };
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
 </head>
 <body>
 
-<form id="demo-form">
+<div class="container" id="form-container">
   <h2>Demo/Free Website</h2>
 
   <label>Topic:</label>
-  <input id="topic" type="text" placeholder="Your Website Topic..." />
+  <input id="topic" placeholder="Your Website Topic..." />
 
   <label>For:</label>
-  <select id="forOption">
-    <option value="Business">Business</option>
-    <option value="Portfolio">Portfolio</option>
-    <option value="Personal">Personal</option>
-    <option value="Event">Event</option>
-    <option value="Blog">Blog</option>
-    <option value="Community">Community</option>
-    <option value="Online Store">Online Store</option>
-    <option value="Education">Education</option>
-    <option value="Entertainment">Entertainment</option>
-    <option value="Non-Profit">Non-Profit</option>
-    <option value="Others">Others</option>
+  <select id="category">
+    <option>Business</option>
+    <option>Personal</option>
+    <option>Portfolio</option>
+    <option>Blog</option>
+    <option>Store</option>
+    <option>Event</option>
+    <option>Startup</option>
+    <option>Non-Profit</option>
+    <option>Education</option>
+    <option>Creative</option>
+    <option>Service</option>
   </select>
 
   <label>Themes:</label>
-  <select id="themeOption">
-    <option value="Minimal">Minimal</option>
-    <option value="Modern">Modern</option>
-    <option value="Professional">Professional</option>
-    <option value="Dark">Dark</option>
-    <option value="Colorful">Colorful</option>
-    <option value="Creative">Creative</option>
-    <option value="Classic">Classic</option>
-    <option value="Bold">Bold</option>
+  <select id="theme">
+    <option>Minimal</option>
+    <option>Dark</option>
+    <option>Colorful</option>
+    <option>Professional</option>
+    <option>Modern</option>
+    <option>Creative</option>
+    <option>Elegant</option>
+    <option>Clean</option>
   </select>
 
-  <label>Domain Name (no extension):</label>
-  <input id="domain" type="text" placeholder="e.g. mybrand" />
+  <label>Domain Name:</label>
+  <input id="domain" placeholder="e.g. mybrand" />
 
   <label>Extra Info:</label>
-  <textarea id="extra" placeholder="Any additional information or requests"></textarea>
+  <textarea id="extra" placeholder="Any additional information or requests..."></textarea>
 
-  <button id="submit-request-btn" type="submit">Submit Request</button>
-</form>
+  <button id="submit-btn">Submit Request</button>
+</div>
 
 <script>
-document.getElementById('submit-request-btn').addEventListener('click', (e) => {
-  e.preventDefault();
+  const username = localStorage.getItem('username') || 'User';
+  const submitBtn = document.getElementById('submit-btn');
+  submitBtn.onclick = async () => {
+    submitBtn.classList.add('bounce');
 
-  const btn = e.target;
-  btn.classList.add('bounce');
+    setTimeout(() => submitBtn.classList.remove('bounce'), 400);
 
-  setTimeout(() => {
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner"></div>';
-  }, 500);
+    const container = document.getElementById('form-container');
+    container.innerHTML = '<div class="spinner"></div>';
 
-  setTimeout(() => {
-    const form = document.getElementById('demo-form');
-    form.style.transition = 'opacity 0.7s, transform 0.7s';
-    form.style.opacity = '0';
-    form.style.transform = 'translateY(-50px)';
+    const topic = document.getElementById('topic').value.trim();
+    const category = document.getElementById('category').value;
+    const theme = document.getElementById('theme').value;
+    const domain = document.getElementById('domain').value.trim();
+    const extra = document.getElementById('extra').value.trim();
 
-    setTimeout(() => {
-      const username = localStorage.getItem('username') || 'User';
-      form.innerHTML = `
+    try {
+      // Save to Firestore
+      await db.collection('demoRequests').add({ username, topic, category, theme, domain, extra, createdAt: new Date() });
+
+      // Show success message
+      container.innerHTML = `
         <div class="success-box">
           ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊<br>
-          💡 Check out our <a href="premium-plans.html" style="color: orange;">Premium Plans</a> for faster and better results!
+          💡 Check out our <a href="premium-plans.html">Premium Plans</a> for faster and better results!
         </div>
       `;
-      form.style.opacity = '1';
-      form.style.transform = 'translateY(0)';
-    }, 800);
-  }, 2000);
-});
+    } catch (error) {
+      container.innerHTML = '<p>Error submitting. Please try again later.</p>';
+      console.error(error);
+    }
+  };
 </script>
-
 </body>
 </html>
