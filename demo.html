@@ -6,129 +6,172 @@
 <title>Demo/Free Website</title>
 <style>
   body {
-    background: #000;
-    color: #fff;
     font-family: Arial, sans-serif;
+    background: #222;
+    color: #fff;
+    min-height: 100vh;
     padding: 2rem;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  h1 { color: #FFD700; margin-bottom: 1rem; }
-  input, select, textarea, button {
+
+  #demo-form {
+    background: #333;
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 400px;
     width: 100%;
-    max-width: 320px;
-    padding: 0.8rem;
-    margin: 0.5rem 0;
+    opacity: 1;
+  }
+
+  h2 {
+    text-align: center;
+    color: orange;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    margin-top: 0.8rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+  }
+
+  select, input, textarea, button {
+    width: 100%;
+    padding: 0.7rem;
     border: none;
     border-radius: 0.4rem;
+    margin-bottom: 0.5rem;
   }
-  input, select, textarea { background: #222; color: #fff; }
+
+  select, input, textarea {
+    background: #444;
+    color: #fff;
+  }
+
   button {
-    background: #FFD700;
+    background: orange;
     color: #000;
-    font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
   }
-  button:hover { background: #e6c200; }
-  .confirmation {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: #222;
-    border: 1px solid #FFD700;
-    border-radius: 0.5rem;
-    display: none;
+
+  /* Bounce & Spinner */
+  .bounce {
+    animation: bounce 0.5s ease;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 5px solid rgba(255,255,255,0.3);
+    border-top-color: orange;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 1rem auto;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .success-box {
+    opacity: 0;
+    background: green;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    animation: fadeIn 0.8s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
   }
 </style>
 </head>
 <body>
 
-<h1>Demo/Free Website</h1>
+<form id="demo-form">
+  <h2>Demo/Free Website</h2>
 
-<!-- NEW options -->
-<label>For:</label>
-<select id="website-type">
-  <option value="portfolio">Portfolio</option>
-  <option value="blog">Blog</option>
-  <option value="business">Business</option>
-  <option value="e-commerce">E-commerce</option>
-  <option value="event">Event</option>
-  <option value="restaurant">Restaurant</option>
-  <option value="landing">Landing Page</option>
-  <option value="education">Education</option>
-  <option value="travel">Travel</option>
-  <option value="fitness">Fitness</option>
-  <option value="music">Music</option>
-  <option value="photography">Photography</option>
-  <option value="nonprofit">Non-Profit</option>
-  <option value="other">Other</option>
-</select>
+  <label>Topic:</label>
+  <input id="topic" type="text" placeholder="Your Website Topic..." />
 
-<label>Theme:</label>
-<select id="theme-option">
-  <option value="minimal">Minimal</option>
-  <option value="dark-mode">Dark Mode</option>
-  <option value="colorful">Colorful</option>
-  <option value="elegant">Elegant</option>
-  <option value="fun">Fun</option>
-  <option value="modern">Modern</option>
-  <option value="classic">Classic</option>
-  <option value="techy">Techy</option>
-</select>
+  <label>For:</label>
+  <select id="forOption">
+    <option value="Business">Business</option>
+    <option value="Portfolio">Portfolio</option>
+    <option value="Personal">Personal</option>
+    <option value="Event">Event</option>
+    <option value="Blog">Blog</option>
+    <option value="Community">Community</option>
+    <option value="Online Store">Online Store</option>
+    <option value="Education">Education</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Non-Profit">Non-Profit</option>
+    <option value="Others">Others</option>
+  </select>
 
-<!-- ORIGINAL fields -->
-<label>Topic:</label>
-<input id="topic" placeholder="Your website's topic..." type="text" />
+  <label>Themes:</label>
+  <select id="themeOption">
+    <option value="Minimal">Minimal</option>
+    <option value="Modern">Modern</option>
+    <option value="Professional">Professional</option>
+    <option value="Dark">Dark</option>
+    <option value="Colorful">Colorful</option>
+    <option value="Creative">Creative</option>
+    <option value="Classic">Classic</option>
+    <option value="Bold">Bold</option>
+  </select>
 
-<label>Domain Name (no extension):</label>
-<input id="domain-name" placeholder="Your desired domain name" type="text" />
+  <label>Domain Name (no extension):</label>
+  <input id="domain" type="text" placeholder="e.g. mybrand" />
 
-<label>Extra Info:</label>
-<textarea id="extra-info" placeholder="Any additional information or requests..."></textarea>
+  <label>Extra Info:</label>
+  <textarea id="extra" placeholder="Any additional information or requests"></textarea>
 
-<button id="submit-btn">Submit Request</button>
+  <button id="submit-request-btn" type="submit">Submit Request</button>
+</form>
 
-<div class="confirmation" id="confirmation-box"></div>
-
-<!-- Firebase setup -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
-    authDomain: "remidernova-login.firebaseapp.com",
-    projectId: "remidernova-login",
-    storageBucket: "remidernova-login.firebasestorage.app",
-    messagingSenderId: "304712721460",
-    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+document.getElementById('submit-request-btn').addEventListener('click', (e) => {
+  e.preventDefault();
 
-  document.getElementById('submit-btn').onclick = async () => {
-    const websiteType = document.getElementById('website-type').value;
-    const theme = document.getElementById('theme-option').value;
-    const topic = document.getElementById('topic').value.trim();
-    const domainName = document.getElementById('domain-name').value.trim();
-    const extraInfo = document.getElementById('extra-info').value.trim();
+  const btn = e.target;
+  btn.classList.add('bounce');
 
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const username = (await db.collection('users').doc(user.uid).get()).data().username;
-        await db.collection('demoRequests').add({ uid: user.uid, username, websiteType, theme, topic, domainName, extraInfo, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+  setTimeout(() => {
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div>';
+  }, 500);
 
-        const confirmationBox = document.getElementById('confirmation-box');
-        confirmationBox.innerHTML = `
+  setTimeout(() => {
+    const form = document.getElementById('demo-form');
+    form.style.transition = 'opacity 0.7s, transform 0.7s';
+    form.style.opacity = '0';
+    form.style.transform = 'translateY(-50px)';
+
+    setTimeout(() => {
+      const username = localStorage.getItem('username') || 'User';
+      form.innerHTML = `
+        <div class="success-box">
           ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊<br>
-          💡 Check out our <a href="plans.html" style="color:#FFD700;">Premium Plans</a> for faster and better results!
-        `;
-        confirmationBox.style.display = 'block';
-      } else {
-        alert('You need to log in first.');
-        window.location.href = 'index.html';
-      }
-    });
-  };
+          💡 Check out our <a href="premium-plans.html" style="color: orange;">Premium Plans</a> for faster and better results!
+        </div>
+      `;
+      form.style.opacity = '1';
+      form.style.transform = 'translateY(0)';
+    }, 800);
+  }, 2000);
+});
 </script>
+
 </body>
 </html>
