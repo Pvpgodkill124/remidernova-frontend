@@ -3,154 +3,135 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Your Profile - RemiderNova</title>
-<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet" />
+<title>Your Profile</title>
 <style>
   body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f5f5f5;
-    color: #222;
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
-  }
-  .container {
-    max-width: 400px;
-    background: #fff;
     padding: 2rem;
-    border-radius: 1rem;
-    margin: 2rem auto;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    text-align: center;
     opacity: 0;
-    transform: translateY(-100px); /* start up */
-    animation: slideDown 0.8s ease forwards;
+    animation: fadeDown 1s forwards;
   }
-  @keyframes slideDown {
-    to { opacity: 1; transform: translateY(0); }
+  @keyframes fadeDown {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
   }
-  .profile-pic {
+  .profile-section {
+    text-align: center;
+    padding: 1rem;
+  }
+  .avatar {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: #ccc center/cover;
     cursor: pointer;
-    margin: 0 auto 1rem;
-    border: 3px solid #007bff;
+    border: 2px solid #fff;
+    margin: 1rem auto;
+    background-size: cover;
+    background-position: center;
   }
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  input.username-input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.3rem;
-    width: 80%;
-    text-align: center;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
-  .discord-btn {
-    padding: 0.8rem 1.5rem;
-    background: #007bff;
+  .join-discord {
+    background: #7289DA;
     color: #fff;
-    border: none;
-    border-radius: 0.3rem;
-    cursor: pointer;
-    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
     text-decoration: none;
-    display: inline-block;
   }
-  .discord-btn:hover {
-    background: #0056b3;
+  /* Modal overlay */
+  .overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none;
+    align-items: center; justify-content: center;
+  }
+  .avatar-gallery {
+    background: #333;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+  }
+  .avatar-gallery img {
+    width: 60px; height: 60px; cursor: pointer;
+    border-radius: 50%; border: 2px solid #fff;
   }
 </style>
 </head>
 <body>
+  <div class="profile-section">
+    <h2 id="username">Your Username</h2>
+    <div class="avatar" id="profile-avatar"></div>
+    <p><a href="https://discord.gg/yourdiscordlink" class="join-discord">Join Us On Discord</a></p>
+  </div>
 
-<div class="container">
-  <div id="profile-pic" class="profile-pic" title="Click to change profile picture"></div>
-  <h2 id="username-display"></h2>
-  <input id="username-input" class="username-input" placeholder="Change username..." />
+  <!-- Avatar Gallery Overlay -->
+  <div class="overlay" id="avatar-overlay">
+    <div class="avatar-gallery" id="avatar-gallery"></div>
+  </div>
 
-  <br/>
-  <a href="https://discord.gg/your-invite-link" target="_blank" class="discord-btn">Join Us On Discord</a>
-</div>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-storage.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
-  // TODO: put your firebase config here
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
     authDomain: "remidernova-login.firebaseapp.com",
     projectId: "remidernova-login",
     storageBucket: "remidernova-login.firebasestorage.app",
     messagingSenderId: "304712721460",
-    appId: "1:304712721460:web:2ab74eccc3b2de33de1661"
+    appId: "1:304712721460:web:4a0d8fd8c0518b49de1661",
+    measurementId: "G-JDB6DHY3K7"
   };
   firebase.initializeApp(firebaseConfig);
-
   const auth = firebase.auth();
   const db = firebase.firestore();
-  const storage = firebase.storage();
 
-  const profilePicEl = document.getElementById('profile-pic');
-  const usernameDisplay = document.getElementById('username-display');
-  const usernameInput = document.getElementById('username-input');
+  const usernameEl = document.getElementById('username');
+  const profileAvatar = document.getElementById('profile-avatar');
+  const overlay = document.getElementById('avatar-overlay');
+  const avatarGallery = document.getElementById('avatar-gallery');
+
+  const avatars = [
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/default.png',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar1.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar2.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar3.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar4.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar5.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar6.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar7.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar8.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar9.jpg',
+    'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/avatar10.jpg'
+  ];
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
-      profilePicEl.style.backgroundImage = `url(${user.photoURL || ''})`;
-      usernameDisplay.innerText = user.displayName || user.email;
-      usernameInput.value = user.displayName || '';
+      const doc = await db.collection('users').doc(user.uid).get();
+      usernameEl.textContent = doc.data().username;
+      profileAvatar.style.backgroundImage = `url('${doc.data().avatarUrl}')`;
     } else {
-      window.location.href = "index.html"; // back to login if not logged in
+      window.location.href = '/index.html';
     }
   });
 
-  // Save username when changed
-  usernameInput.addEventListener('change', async () => {
-    const user = auth.currentUser;
-    if (user) {
-      await user.updateProfile({ displayName: usernameInput.value });
-      usernameDisplay.innerText = usernameInput.value;
-      await db.collection('users').doc(user.uid).set(
-        { username: usernameInput.value },
-        { merge: true }
-      );
-      alert('Username updated.');
-    }
-  });
+  profileAvatar.onclick = () => overlay.style.display = 'flex';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.style.display = 'none'; }
 
-  // Upload profile picture
-  profilePicEl.onclick = () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.onchange = async (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const ref = storage.ref(`profilePics/${auth.currentUser.uid}.jpg`);
-        await ref.put(file);
-        const url = await ref.getDownloadURL();
-        await auth.currentUser.updateProfile({ photoURL: url });
-        profilePicEl.style.backgroundImage = `url(${url})`;
-        await db.collection('users').doc(auth.currentUser.uid).set(
-          { profilePic: url },
-          { merge: true }
-        );
-        alert('Profile picture updated.');
-      }
+  avatars.forEach((url) => {
+    const img = document.createElement('img');
+    img.src = url;
+    img.onclick = async () => {
+      profileAvatar.style.backgroundImage = `url('${url}')`;
+      overlay.style.display = 'none';
+      const user = auth.currentUser;
+      if (user) await db.collection('users').doc(user.uid).update({ avatarUrl: url });
     };
-    fileInput.click();
-  };
+    avatarGallery.appendChild(img);
+  });
 </script>
 </body>
-  </html>
+</html>
