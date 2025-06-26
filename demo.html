@@ -6,77 +6,124 @@
 <title>Demo/Free Website</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
     background: #222;
     color: #fff;
-    min-height: 100vh;
+    font-family: Arial, sans-serif;
     padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
   }
-  .container {
-    background: #333;
+  h1 { color: orange; }
+
+  form {
+    background: rgba(0,0,0,0.6);
     padding: 2rem;
     border-radius: 1rem;
-    width: 100%;
     max-width: 400px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    opacity: 0;
-    transform: translateY(-50px);
-    animation: dropIn 0.7s forwards;
+    margin: 0 auto;
   }
-  @keyframes dropIn {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  h2 { text-align: center; margin-bottom: 1rem; color: orange; }
-  label { display: block; margin-top: 0.8rem; }
-  select, input, textarea, button {
+  label, select, input, textarea {
     width: 100%;
-    padding: 0.7rem;
-    margin-top: 0.3rem;
+    padding: 0.5rem;
+    margin: 0.3rem 0;
+    border-radius: 0.3rem;
     border: none;
-    border-radius: 0.4rem;
-    background: #555;
-    color: #fff;
+  }
+  select, input, textarea {
+    background: #333;
+    color: white;
   }
   button {
+    padding: 0.7rem 1.5rem;
     background: orange;
-    color: #000;
+    border: none;
+    border-radius: 0.4rem;
     cursor: pointer;
     font-weight: bold;
-    transition: transform 0.3s;
+    margin-top: 1rem;
   }
-  button.bounce { transform: scale(1.1); }
+
   .spinner {
-    border: 2px solid #ccc;
-    border-top: 2px solid #000;
+    border: 4px solid #333;
+    border-top: 4px solid orange;
     border-radius: 50%;
-    width: 20px; height: 20px;
-    animation: spin 0.7s linear infinite;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
     margin: 1rem auto;
+    display: none;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .success-box {
-    background: #0a0;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    color: #fff;
-    text-align: center;
-    font-size: 1.1rem;
-    animation: pop 0.5s forwards;
+  @keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
   }
-  @keyframes pop {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+
+  .success {
+    background: green;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-top: 1rem;
+    opacity: 0;
+    transition: opacity 1s ease;
   }
-  .success-box a {
-    color: orange;
-    text-decoration: underline;
-  }
+  .success.show { opacity: 1; }
+  .success a { color: orange; text-decoration: underline; }
 </style>
-<!-- Firebase -->
+</head>
+<body>
+
+<h1>Demo/Free Website</h1>
+<p>Request your free website in under 1 minute!</p>
+
+<form id="demo-form">
+  <label>Topic:</label>
+  <input id="topic-input" placeholder="Your Website Topic..." />
+
+  <label>For:</label>
+  <select id="for-select">
+    <option>Business</option>
+    <option>Portfolio</option>
+    <option>Education</option>
+    <option>Entertainment</option>
+    <option>Tech</option>
+    <option>Non-Profit</option>
+    <option>Blog</option>
+    <option>Event</option>
+    <option>Personal</option>
+    <option>E-commerce</option>
+    <option>Community</option>
+    <option>Photography</option>
+    <option>Music</option>
+    <option>Restaurant</option>
+    <option>Fitness</option>
+  </select>
+
+  <label>Theme:</label>
+  <select id="theme-select">
+    <option>Minimal</option>
+    <option>Modern</option>
+    <option>Professional</option>
+    <option>Creative</option>
+    <option>Dark</option>
+    <option>Light</option>
+    <option>Colorful</option>
+    <option>Techy</option>
+  </select>
+
+  <label>Domain Name:</label>
+  <input id="domain-input" placeholder="e.g. mybrand" />
+
+  <label>Extra Info:</label>
+  <textarea id="extra-info" placeholder="Any additional info"></textarea>
+
+  <button id="submit-btn" type="button">Submit Request</button>
+</form>
+
+<div class="spinner" id="spinner"></div>
+<div class="success" id="success-msg"></div>
+
+<!-- Firebase scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore.js"></script>
 <script>
   const firebaseConfig = {
@@ -88,86 +135,55 @@
     appId: "1:304712721460:web:4a0d8fd8c0518b49de1661"
   };
   const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
   const db = firebase.firestore();
-</script>
-</head>
-<body>
 
-<div class="container" id="form-container">
-  <h2>Demo/Free Website</h2>
+  const spinner = document.getElementById('spinner');
+  const successMsg = document.getElementById('success-msg');
 
-  <label>Topic:</label>
-  <input id="topic" placeholder="Your Website Topic..." />
+  function showLoadingSpinner() {
+    spinner.style.display = 'block';
+  }
+  function hideLoadingSpinner() {
+    spinner.style.display = 'none';
+  }
 
-  <label>For:</label>
-  <select id="category">
-    <option>Business</option>
-    <option>Personal</option>
-    <option>Portfolio</option>
-    <option>Blog</option>
-    <option>Store</option>
-    <option>Event</option>
-    <option>Startup</option>
-    <option>Non-Profit</option>
-    <option>Education</option>
-    <option>Creative</option>
-    <option>Service</option>
-  </select>
+  async function submitRequest() {
+    const user = auth.currentUser;
+    const username = user ? user.displayName || user.email : 'Guest';
+    const topic = document.getElementById('topic-input').value.trim();
+    const theme = document.getElementById('theme-select').value;
+    const domain = document.getElementById('domain-input').value.trim();
+    const extraInfo = document.getElementById('extra-info').value.trim();
 
-  <label>Themes:</label>
-  <select id="theme">
-    <option>Minimal</option>
-    <option>Dark</option>
-    <option>Colorful</option>
-    <option>Professional</option>
-    <option>Modern</option>
-    <option>Creative</option>
-    <option>Elegant</option>
-    <option>Clean</option>
-  </select>
+    if (!topic || !theme || !domain) {
+      alert('Please fill all required fields.');
+      return;
+    }
 
-  <label>Domain Name:</label>
-  <input id="domain" placeholder="e.g. mybrand" />
-
-  <label>Extra Info:</label>
-  <textarea id="extra" placeholder="Any additional information or requests..."></textarea>
-
-  <button id="submit-btn">Submit Request</button>
-</div>
-
-<script>
-  const username = localStorage.getItem('username') || 'User';
-  const submitBtn = document.getElementById('submit-btn');
-  submitBtn.onclick = async () => {
-    submitBtn.classList.add('bounce');
-
-    setTimeout(() => submitBtn.classList.remove('bounce'), 400);
-
-    const container = document.getElementById('form-container');
-    container.innerHTML = '<div class="spinner"></div>';
-
-    const topic = document.getElementById('topic').value.trim();
-    const category = document.getElementById('category').value;
-    const theme = document.getElementById('theme').value;
-    const domain = document.getElementById('domain').value.trim();
-    const extra = document.getElementById('extra').value.trim();
+    showLoadingSpinner();
 
     try {
-      // Save to Firestore
-      await db.collection('demoRequests').add({ username, topic, category, theme, domain, extra, createdAt: new Date() });
+      await db.collection('demoRequests').add({
+        uid: user ? user.uid : null,
+        username: username,
+        topic: topic,
+        theme: theme,
+        domain: domain,
+        extra: extraInfo,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-      // Show success message
-      container.innerHTML = `
-        <div class="success-box">
-          ✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊<br>
-          💡 Check out our <a href="premium-plans.html">Premium Plans</a> for faster and better results!
-        </div>
-      `;
-    } catch (error) {
-      container.innerHTML = '<p>Error submitting. Please try again later.</p>';
-      console.error(error);
+      hideLoadingSpinner();
+      successMsg.innerHTML = `✅ Within 7 days ${username}, you will get your website ready. Thanks for visiting 😊<br>💡 Check out our <a href="premium-plans.html">Premium Plans</a> for faster and better results!`;
+      successMsg.classList.add('show');
+    } catch (e) {
+      hideLoadingSpinner();
+      alert('Error submitting request: ' + e.message);
     }
-  };
+  }
+
+  document.getElementById('submit-btn').onclick = submitRequest;
 </script>
 </body>
 </html>
