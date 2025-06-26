@@ -39,11 +39,10 @@
   .error { color: red; font-size: 0.9rem; }
 </style>
 
-<!-- ✅ Firebase v8.x scripts -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
@@ -114,7 +113,11 @@
 
     try {
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      await db.collection('users').doc(userCredential.user.uid).set({ username, email });
+      await db.collection('users').doc(userCredential.user.uid).set({
+        username: username,
+        email: email,
+        avatarUrl: 'https://raw.githubusercontent.com/Pvpgodkill124/remidernova/main/avatars/default.png'
+      });
 
       alert('Sign up successful — redirecting...');
       setTimeout(() => { window.location.href = '/dashboard.html'; }, 1000);
