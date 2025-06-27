@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -68,10 +67,12 @@
   .main-content h1 {
     font-size: 2.2rem;
     margin-bottom: 0.8rem;
+    color: #fff;
   }
   .main-content p {
     max-width: 500px;
     margin: 0 auto 2rem;
+    color: #f9f9f9;
     font-size: 1.1rem;
   }
   .cta-btn {
@@ -84,7 +85,6 @@
     font-weight: bold;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
   }
-  .cta-btn:hover { background: linear-gradient(45deg, #6B46C1, #ED64A6); }
   .services-section {
     background: rgba(255,255,255,0.2);
     padding: 2rem;
@@ -138,13 +138,12 @@
   }
   .modal-content a {
     padding: 0.8rem 1.5rem;
-    background: linear-gradient(45deg, #6B46C1, #ED64A6);
-    color: #fff;
+    background: #fff;
+    color: #6B46C1;
     text-decoration: none;
     border-radius: 0.5rem;
     font-weight: bold;
   }
-  .modal-content a:hover { background: linear-gradient(45deg, #6B46C1, #ED64A6); }
 </style>
 </head>
 <body>
@@ -187,7 +186,7 @@
 </section>
 <div class="modal" id="modal" onclick="closeModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <a href="free-website.html">Free Website</a>
+    <a href="demo.html">Free Website</a>
     <a href="premium-website.html">Premium Website</a>
   </div>
 </div>
@@ -213,21 +212,7 @@
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-  const db = firebase.firestore();
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      window.location.href = "index.html";
-    } else {
-      try {
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        const data = userDoc.data();
-        const avatar = data?.avatarUrl || "default.png";
-        document.getElementById("user-profile").style.backgroundImage = `url(avatars/${avatar})`;
-      } catch (e) {
-        console.error("Error loading avatar:", e);
-      }
-    }
-  });
-</script>
+  const db = firebase.firestore();auth.onAuthStateChanged(async (user) => { if (!user) { window.location.href = "index.html"; } else { try { const doc = await db.collection('users').doc(user.uid).get(); if (doc.exists) { const data = doc.data(); const avatarFile = data.avatarUrl || 'default.png'; document.getElementById('user-profile').style.backgroundImage = url(avatars/${avatarFile}); } } catch (e) { console.error("Error fetching avatar:", e); } } }); </script>
+
 </body>
 </html>
