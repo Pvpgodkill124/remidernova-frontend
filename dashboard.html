@@ -10,7 +10,7 @@
   body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(45deg, #6B46C1, #ED64A6); /* colorful gradient */
+    background: linear-gradient(45deg, #6B46C1, #ED64A6);
     color: #fff;
     min-height: 100vh;
     overflow-x: hidden;
@@ -41,8 +41,6 @@
     background: #fff;
     border-radius: 2px;
   }
-
-  /* Sidebar */
   .sidebar {
     position: fixed;
     top: 0;
@@ -66,7 +64,6 @@
   .sidebar a:hover {
     background: rgba(255,255,255,0.1);
   }
-
   .main-content {
     padding: 3rem 1rem;
     text-align: center;
@@ -95,8 +92,6 @@
   .cta-btn:hover {
     background: linear-gradient(45deg, #6B46C1, #ED64A6);
   }
-
-  /* Services section */
   .services-section {
     background: rgba(255,255,255,0.2);
     padding: 2rem;
@@ -129,8 +124,6 @@
     border-radius: 0.3rem;
     border: 2px solid #fff;
   }
-
-  /* Modal */
   .modal {
     position: fixed;
     top: 0; left: 0;
@@ -218,8 +211,8 @@
   </div>
 </div>
 
+<!-- Sidebar & Modal Script -->
 <script>
-  // Sidebar & Modal
   const sidebar = document.getElementById('sidebar');
   const menuToggle = document.getElementById('menu-toggle');
   const modal = document.getElementById('modal');
@@ -229,9 +222,10 @@
   function closeModal() { modal.classList.remove('open'); }
 </script>
 
-<!-- Firebase auth check -->
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-auth.js"></script>
+<!-- Firebase: Load avatar from Firestore and use local avatar file -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyB5vtpjJEGlyXAupMWkzbDXK0f2TSm2VWQ",
@@ -241,13 +235,23 @@
     messagingSenderId: "304712721460",
     appId: "1:304712721460:web:2ab74eccc3b2de33de1661"
   };
-  firebase.initializeApp(firebaseConfig);
 
-  firebase.auth().onAuthStateChanged((user) => {
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  auth.onAuthStateChanged(async (user) => {
     if (!user) {
       window.location.href = "index.html";
-    } else if (user.photoURL) {
-      document.getElementById('user-profile').style.backgroundImage = `url(${user.photoURL})`;
+    } else {
+      try {
+        const doc = await db.collection('users').doc(user.uid).get();
+        const avatarFile = doc.data().avatarUrl || 'default.png';
+        const avatarPath = `avatars/${avatarFile.split('/').pop()}`;
+        document.getElementById('user-profile').style.backgroundImage = `url('${avatarPath}')`;
+      } catch (e) {
+        console.error("Failed to load avatar:", e);
+      }
     }
   });
 </script>
